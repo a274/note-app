@@ -10,7 +10,6 @@ export default class Profile extends Component {
     this.state = {
       redirect: null,
       userReady: false,
-      hasNotes: false,
       noteList: {
           id: 0,
           note: "",
@@ -39,10 +38,9 @@ export default class Profile extends Component {
     if (this.state.redirect) {
       return <Redirect to={this.state.redirect} />
     }
-    const { hasNotes } = this.state;
     const { currentUser } = this.state;
     let { noteList } = this.state;
-    noteList = currentUser.noteList?.map(note => <Note key={note.id} note={note.note} date={note.date} />);
+    noteList = currentUser.noteList?.map((note, index) => <React.Fragment key={index}><Note id={note.id} note={note.note} date={note.date} /></React.Fragment>);
 
     return (
       <div className="container">
@@ -52,7 +50,7 @@ export default class Profile extends Component {
           <div className="row">
           {noteList}
               <div className="add-card card block1">
-                  <form method="POST" action="create">
+                  <form method="POST" action="/">
                       <span className="card-title">Текст заметки:</span>
                       <input type="text" name="note"/>
                       <input className="btn btn-primary" type="submit" value="Добавить" name="Submit"/>
