@@ -18,14 +18,12 @@ public class UserResponse {
     private String login;
     private String password;
     private List<NoteResponse> noteList;
-    private String cookie;
 
-    public UserResponse(User user, String cookie) {
+    public UserResponse(User user) {
         this.id = user.getId();
         this.login = user.getLogin();
         this.password = user.getPassword();
         this.noteList = map(user.getNoteList());
-        this.cookie = cookie;
     }
 
     private List<NoteResponse> map(List<Note> noteList) {

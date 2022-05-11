@@ -7,23 +7,23 @@ class AuthService {
   cookies = new Cookies();
 
   login(login, password) {
+    this.cookies.set('Cookie', password);
     return fetch(API_URL + "sign", {
       method: 'GET',
       headers: {
         Authorization: "Basic " + btoa(login + ":" + password)
-      },
-      credentials: 'same-origin'
+      }
+      //credentials: 'same-origin',
+      //withCredentials: true
     })
       .then(this.handleResponse)
       .then(user => {
-        alert(JSON.stringify(user));
         if (user) {
           user.authdata = window.btoa(login + ':' + password);
+          if (user !== null) {
+             user.password = this.cookies.get('Cookie'); 
+          }
           localStorage.setItem('user', JSON.stringify(user));
-          //if (user.cookie !== null) {
-          //   this.cookies.set('Cookie', user.cookie);
-          //   alert(this.cookies.get('Cookie')); 
-          // }
         }
 
         return user;
@@ -32,12 +32,6 @@ class AuthService {
 
   logout() {
     localStorage.removeItem("user");
-    return fetch(API_URL + "logout", {
-      method: 'GET',
-      headers: {
-        Cookie: this.cookies.get("Cookie")
-      }
-    });
   }
 
   handleResponse(response) {
@@ -76,27 +70,6 @@ class AuthService {
         return json;
       });
   }*/
-
-  /*
-  login(login, password) {
-    const result = fetch(API_URL + "sign", {
-      method: 'GET',
-      headers: {
-        Authorization: "Basic " + btoa(login + ":" + password)
-      }
-    }).then(res =>
-      res
-    ).catch(error =>
-      error
-    )
-    let data;
-    if (!result.ok) {
-      data = `UNAUTHENTICATED`;
-    }
-    data = result.json();
-    return data;
-  }
-*/
 
   register(login, password) {
     return fetch(API_URL + "sign", {
