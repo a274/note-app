@@ -44,6 +44,30 @@ class NoteService {
       });
   }
 
+  editNote(noteId, note, curUser) {
+    const EDIT_URL = API_URL + "edit?id=" + noteId;
+    const postData = {
+      "note": note
+    };
+
+    return fetch(EDIT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: "Basic " + curUser.authdata
+      },
+      body: JSON.stringify(postData)
+    })
+      .then(this.handleResponse)
+      .then(user => {
+        if (user) {
+          user.authdata = curUser.authdata;
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+        return user;
+      });
+  }
+
   getUser(curUser) {
     return fetch(API_URL, {
       method: 'GET',

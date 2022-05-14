@@ -4,15 +4,19 @@ import CheckButton from "react-validation/build/button";
 import Form from "react-validation/build/form";
 import NoteService from "../services/note.service";
 import AuthService from "../services/auth.service";
-import EditNote from "./edit-note.component";
+import Input from "react-validation/build/input";
 
-export default class Note extends Component {
+
+export default class EditNote extends Component {
     constructor(props) {
         super(props);
-        this.handleDeleteNote = this.handleDeleteNote.bind(this);
+        this.handleEditNote = this.handleEditNote.bind(this);
+        this.onChangeNote = this.onChangeNote.bind(this);
+        this.handleEditClick = this.handleEditClick.bind(this);
 
         this.state = {
-            redirect: null,
+            isEditClicked: false,
+
             key: props.id,
             note: props.note,
             date: props.date,
@@ -31,13 +35,23 @@ export default class Note extends Component {
         };
     }
 
+    handleEditClick = e => {
+        const temp = this.state.isEditClicked;
+        this.setState({ isEditClicked: !temp })
+    }
+
+    onChangeNote(e) {
+        this.setState({
+            note: e.target.value
+        });
+    }
+
     componentDidMount() {
         const currentUser = AuthService.getCurrentUser();
-        if (!currentUser) this.setState({ redirect: "/profile" });
         this.setState({ currentUser: currentUser })
     }
 
-    handleDeleteNote(e) {
+    handleEditNote(e) {
         e.preventDefault();
 
         this.setState({
@@ -46,7 +60,7 @@ export default class Note extends Component {
         });
 
         if (this.checkBtn.context._errors.length === 0) {
-            NoteService.deleteNote(this.state.key, this.state.currentUser).then(
+            NoteService.editNote(this.state.key, this.state.note, this.state.currentUser).then(
                 () => {
                     window.location.reload();
                 },
@@ -72,23 +86,36 @@ export default class Note extends Component {
     }
 
     render() {
+        const { isEditClicked } = this.state;
         return (
-            <div className="col-lg-4 col-sm-6">
-                <div className="block1 card">
-                    <div className="card-body">
-                        <p className="card-text">{this.state.note}</p>
-                        <p className="align-start text-right font-weight-lighter card-text">{this.state.date}</p>
-                        <EditNote id={this.state.key} note={this.state.note} date={this.state.date}/>
+            <div>
+                <div className="form-group">
+                    <button onClick={this.handleEditClick} className="btn btn-primary btn-block">
+                        <span>Edit</span>
+                    </button>
+                </div>
+                {isEditClicked && (
+                    <div>
                         <Form
-                            onSubmit={this.handleDeleteNote}
+                            onSubmit={this.handleEditNote}
                             ref={c => {
                                 this.form = c;
                             }}
                         >
+                            <div className="form-group">
+                                <label htmlFor="note">Input note text: </label>
+                                <Input
+                                    type="text"
+                                    className="form-control"
+                                    name="note"
+                                    value={this.state.note}
+                                    onChange={this.onChangeNote}
+                                />
+                            </div>
 
                             <div className="form-group">
                                 <button className="btn btn-primary btn-block">
-                                    <span>Delete</span>
+                                    <span>Save</span>
                                 </button>
                             </div>
 
@@ -99,9 +126,11 @@ export default class Note extends Component {
                                 }}
                             />
                         </Form>
+
                     </div>
-                </div>
+                )}
             </div>
         )
     }
+
 }
