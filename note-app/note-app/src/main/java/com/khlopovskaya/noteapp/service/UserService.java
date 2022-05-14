@@ -35,6 +35,13 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
     }
 
+    public void create(UserRequest userRequest) {
+        User user = new User();
+        user.setLogin(userRequest.getLogin());
+        user.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
+        userRepo.save(user);
+    }
+
     public User getUserById(int id) {
         return userRepo.findById(id);
     }

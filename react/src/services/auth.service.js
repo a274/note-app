@@ -1,31 +1,20 @@
-
-import Cookies from 'universal-cookie';
 const API_URL = "http://localhost:8083/";
 
 
 class AuthService {
-  cookies = new Cookies();
-
   login(login, password) {
-    this.cookies.set('Cookie', password);
     return fetch(API_URL + "sign", {
       method: 'GET',
       headers: {
         Authorization: "Basic " + btoa(login + ":" + password)
       }
-      //credentials: 'same-origin',
-      //withCredentials: true
     })
       .then(this.handleResponse)
       .then(user => {
         if (user) {
           user.authdata = window.btoa(login + ':' + password);
-          if (user !== null) {
-             user.password = this.cookies.get('Cookie'); 
-          }
           localStorage.setItem('user', JSON.stringify(user));
         }
-
         return user;
       });
   }
@@ -72,12 +61,27 @@ class AuthService {
   }*/
 
   register(login, password) {
+    const postData = {
+      "login": login,
+      "password": password,
+    };
+
     return fetch(API_URL + "sign", {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: "Basic " + btoa(login + ":" + password)
-      }
+      },
+      body: JSON.stringify(postData)
     })
+      .then(this.handleResponse)
+      .then(user => {
+        if (user) {
+          user.authdata = window.btoa(login + ':' + password);
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+        return user;
+      });
   }
 
   getCurrentUser() {

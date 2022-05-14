@@ -5,14 +5,11 @@ import com.khlopovskaya.noteapp.model.User;
 import com.khlopovskaya.noteapp.model.UserResponse;
 import com.khlopovskaya.noteapp.service.NoteService;
 import com.khlopovskaya.noteapp.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-
-@Slf4j
 @RestController
 @RequestMapping("/")
 public class NoteController {
@@ -32,7 +29,7 @@ public class NoteController {
         return ResponseEntity.ok().body(new UserResponse(user));
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<UserResponse> createNote(Authentication authentication, @RequestBody NoteRequest noteRequest) {
         User user = (User) userService.loadUserByUsername(authentication.getName());
         noteService.saveNote(user.getId(), noteRequest);
@@ -40,7 +37,7 @@ public class NoteController {
         return ResponseEntity.ok().body(new UserResponse(user));
     }
 
-    @PostMapping("/edit")
+    @PutMapping
     public ResponseEntity<UserResponse> editNote(Authentication authentication,
                                                  @RequestParam(name = "id") int id,
                                                  @RequestBody NoteRequest noteRequest) {
@@ -50,7 +47,7 @@ public class NoteController {
         return ResponseEntity.ok().body(new UserResponse(user));
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<UserResponse> deleteNote(Authentication authentication, @RequestParam(name = "id") int id) {
         noteService.deleteNote(id);
         User user = (User) userService.loadUserByUsername(authentication.getName());

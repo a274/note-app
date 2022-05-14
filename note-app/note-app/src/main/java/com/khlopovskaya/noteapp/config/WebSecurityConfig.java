@@ -5,8 +5,11 @@ import com.khlopovskaya.noteapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
 
@@ -22,30 +26,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.userService = userService;
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
                 .csrf()
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/").hasAnyAuthority("USER")
-                .antMatchers("/login", "/sign").permitAll()
+                .antMatchers(HttpMethod.POST, "/login", "/sign").permitAll()
+                .antMatchers(HttpMethod.GET, "/login", "/sign").permitAll()
                 .antMatchers("/logout").hasAnyAuthority("USER")
                 .anyRequest().authenticated()
                 .and().httpBasic()
                 .and()
-                .logout()
-                    .deleteCookies("JSESSIONID")
-                    .invalidateHttpSession(true)
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/")
-                .and()
-                .formLogin()
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .formLogin().and().logout().logoutSuccessUrl("/").and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation().migrateSession();
+        http.cors();
     }
 
     @Override
@@ -53,6 +50,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth
                 .userDetailsService(userService)
                 .passwordEncoder(encoder());
+    }
+
+    @Override
+    public void configure(WebSecurity webSecurity) throws Exception {
+        webSecurity
+                .ignoring()
+                // All of Spring Security will ignore the requests
+                .antMatchers(HttpMethod.POST, "/sign");
     }
 
     @Bean
