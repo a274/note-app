@@ -76,7 +76,6 @@ export default class Note extends Component {
             <div className="col-lg-4 col-sm-6">
                 <div className="block1 card">
                     <div className="card-body">
-                        <p className="card-text">{this.state.key}</p>
                         <p className="card-text">{this.state.note}</p>
                         <p className="align-start text-right font-weight-lighter card-text">{this.state.date}</p>
                         <EditNote id={this.state.key} note={this.state.note} date={this.state.date}/>
