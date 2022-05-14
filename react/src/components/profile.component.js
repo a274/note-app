@@ -95,7 +95,7 @@ export default class Profile extends Component {
       <div className="container">
         {(this.state.userReady) ?
           <div className="main_block">
-            <div className="row"><h2>Заметки</h2></div>
+            <div className="row"><h2>Your notes</h2></div>
             <div className="row">
               {noteList}
               <div className="col-lg-4 col-sm-6">
@@ -109,7 +109,7 @@ export default class Profile extends Component {
                     }}
                   >
                     <div className="form-group">
-                      <label htmlFor="note">Введите текст заметки: </label>
+                      <label htmlFor="note">Input note text: </label>
                       <Input
                         type="text"
                         className="form-control"
@@ -127,7 +127,7 @@ export default class Profile extends Component {
                         {this.state.loading && (
                           <span className="spinner-border spinner-border-sm"></span>
                         )}
-                        <span>Добавить</span>
+                        <span>Add</span>
                       </button>
                     </div>
 

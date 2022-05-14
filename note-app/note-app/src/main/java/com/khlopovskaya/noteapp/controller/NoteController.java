@@ -37,7 +37,7 @@ public class NoteController {
         return ResponseEntity.ok().body(new UserResponse(user));
     }
 
-    @PutMapping
+    @PostMapping("/edit")
     public ResponseEntity<UserResponse> editNote(Authentication authentication,
                                                  @RequestParam(name = "id") int id,
                                                  @RequestBody NoteRequest noteRequest) {
