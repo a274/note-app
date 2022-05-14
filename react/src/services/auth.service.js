@@ -21,6 +21,9 @@ class AuthService {
 
   logout() {
     localStorage.removeItem("user");
+    return fetch(API_URL + "logout", {
+      method: 'GET'
+    })
   }
 
   handleResponse(response) {
@@ -39,26 +42,6 @@ class AuthService {
       return data;
     });
   }
-
-  /*
-  login(login, password) {
-    return fetch (API_URL + "sign", {
-        method: 'GET',
-        headers: {
-            Authorization: "Basic " + btoa(login + ":" + password)
-        }
-    })
-      .then(response => response.json())
-      .then(json => {
-        alert(JSON.stringify(json));
-        console.log('parsed json', json);
-        if (json) { 
-          alert(JSON.stringify(json));
-          localStorage.setItem("user", JSON.stringify(json));
-        }
-        return json;
-      });
-  }*/
 
   register(login, password) {
     const postData = {
@@ -85,6 +68,7 @@ class AuthService {
   }
 
   getCurrentUser() {
+    // get user to server
     return JSON.parse(localStorage.getItem('user'));;
   }
 }

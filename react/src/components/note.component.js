@@ -33,15 +33,21 @@ export default class Note extends Component {
 
     componentDidMount() {
         const currentUser = AuthService.getCurrentUser();
-        if (!currentUser) this.setState({ redirect: "/" });
+        if (!currentUser) this.setState({ redirect: "/profile" });
         this.setState({ currentUser: currentUser })
     }
 
     handleDeleteNote(e) {
+        e.preventDefault();
+
+        this.setState({
+            message: "",
+            loading: true
+        });
+
         if (this.checkBtn.context._errors.length === 0) {
-            NoteService.deleteNote(this.state.key, this.state.currentUser.login, this.state.currentUser.password).then(
+            NoteService.deleteNote(this.state.key, this.state.currentUser).then(
                 () => {
-                    //this.props.history.push("/profile");
                     window.location.reload();
                 },
                 error => {
@@ -53,20 +59,21 @@ export default class Note extends Component {
                         error.toString();
 
                     this.setState({
+                        loading: false,
                         message: resMessage
                     });
                 }
             );
+        } else {
+            this.setState({
+                loading: false
+            });
         }
     }
 
     render() {
-        if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
-        }
-
         return (
-            <div className="col-lg-4 col-sm-6 books">
+            <div className="col-lg-4 col-sm-6">
                 <div className="block1 card">
                     <div className="card-body">
                         <p className="card-text">{this.state.key}</p>
