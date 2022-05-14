@@ -39,9 +39,9 @@ export default class Note extends Component {
 
     handleDeleteNote(e) {
         if (this.checkBtn.context._errors.length === 0) {
-            NoteService.deleteNote(this.state.key, this.state.currentUser.login, this.state.currentUser.password).then(
+            NoteService.deleteNote(this.state.key, this.state.currentUser).then(
                 () => {
-                    //this.props.history.push("/profile");
+                    this.props.history.push("/profile");
                     window.location.reload();
                 },
                 error => {

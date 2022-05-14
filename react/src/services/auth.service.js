@@ -21,6 +21,9 @@ class AuthService {
 
   logout() {
     localStorage.removeItem("user");
+    return fetch(API_URL + "logout", {
+      method: 'GET'
+    })
   }
 
   handleResponse(response) {
