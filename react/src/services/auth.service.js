@@ -43,26 +43,6 @@ class AuthService {
     });
   }
 
-  /*
-  login(login, password) {
-    return fetch (API_URL + "sign", {
-        method: 'GET',
-        headers: {
-            Authorization: "Basic " + btoa(login + ":" + password)
-        }
-    })
-      .then(response => response.json())
-      .then(json => {
-        alert(JSON.stringify(json));
-        console.log('parsed json', json);
-        if (json) { 
-          alert(JSON.stringify(json));
-          localStorage.setItem("user", JSON.stringify(json));
-        }
-        return json;
-      });
-  }*/
-
   register(login, password) {
     const postData = {
       "login": login,
@@ -88,6 +68,7 @@ class AuthService {
   }
 
   getCurrentUser() {
+    // get user to server
     return JSON.parse(localStorage.getItem('user'));;
   }
 }

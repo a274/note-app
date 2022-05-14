@@ -6,6 +6,46 @@ class NoteService {
   deleteNote(noteId, curUser) {
     const DEL_URL = API_URL + "delete?id=" + noteId;
     return fetch(DEL_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: "Basic " + curUser.authdata
+      }
+    })
+      .then(this.handleResponse)
+      .then(user => {
+        if (user) {
+          user.authdata = curUser.authdata;
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+        return user;
+      });
+  }
+
+  addNote(note, curUser) {
+    const postData = {
+      "note": note
+    };
+
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: "Basic " + curUser.authdata
+      },
+      body: JSON.stringify(postData)
+    })
+      .then(this.handleResponse)
+      .then(user => {
+        if (user) {
+          user.authdata = curUser.authdata;
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+        return user;
+      });
+  }
+
+  getUser(curUser) {
+    return fetch(API_URL, {
       method: 'GET',
       headers: {
         Authorization: "Basic " + curUser.authdata
@@ -13,7 +53,6 @@ class NoteService {
     })
       .then(this.handleResponse)
       .then(user => {
-        alert(JSON.stringify(user));
         if (user) {
           user.authdata = curUser.authdata;
           localStorage.setItem('user', JSON.stringify(user));
@@ -24,7 +63,6 @@ class NoteService {
 
   handleResponse(response) {
     return response.text().then(text => {
-      alert("error");
       const data = text && JSON.parse(text);
 
       if (!response.ok) {
@@ -33,7 +71,7 @@ class NoteService {
         }
 
         const error = (data && data.message) || response.statusText;
-        
+
         return Promise.reject(error);
       }
 

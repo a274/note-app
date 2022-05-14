@@ -1,35 +1,43 @@
 import React, { Component } from "react";
 
-import UserService from "../services/user.service";
+import AuthService from "../services/auth.service";
+import NoteService from "../services/note.service";
+
+import { Redirect } from "react-router-dom";
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      content: ""
+      content: "",
+      redirect: null,
+      currentUser: {
+        id: 0,
+        login: "",
+        password: "",
+        noteList: [{
+          id: 0,
+          note: "",
+          date: ""
+        }
+        ]
+      }
     };
   }
 
   componentDidMount() {
-    UserService.getPublicContent().then(
-      response => {
-        this.setState({
-          content: response.data
-        });
-      },
-      error => {
-        this.setState({
-          content:
-            (error.response && error.response.data) ||
-            error.message ||
-            error.toString()
-        });
-      }
-    );
+    const currentUser1 = AuthService.getCurrentUser();
+
+    const currentUser = NoteService.getUser(currentUser1);
+    if (currentUser) this.setState({ redirect: "/profile" });
+    this.setState({ currentUser: currentUser })
   }
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />
+    }
     return (
       <div className="container">
         <header className="jumbotron">

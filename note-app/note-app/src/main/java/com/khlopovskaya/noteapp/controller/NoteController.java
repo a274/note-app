@@ -47,10 +47,11 @@ public class NoteController {
         return ResponseEntity.ok().body(new UserResponse(user));
     }
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public ResponseEntity<UserResponse> deleteNote(Authentication authentication, @RequestParam(name = "id") int id) {
-        noteService.deleteNote(id);
         User user = (User) userService.loadUserByUsername(authentication.getName());
+        noteService.deleteNote(id);
+        user = userService.getUserById(user.getId());
         return ResponseEntity.ok().body(new UserResponse(user));
     }
 }
